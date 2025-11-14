@@ -1,3 +1,4 @@
+# test_logic.py
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -48,7 +49,7 @@ class TestNoteCreation(TestCase):
         notes_count = Note.objects.count()
         duplicate_data = self.form_data.copy()
         duplicate_data['title'] = 'Другой заголовок'
-        
+
         response = self.auth_client.post(self.url, data=duplicate_data)
         form = response.context['form']
         self.assertFormError(
@@ -63,7 +64,7 @@ class TestNoteCreation(TestCase):
         form_data_without_slug.pop('slug')
         response = self.auth_client.post(self.url, data=form_data_without_slug)
         self.assertRedirects(response, reverse('notes:success'))
-        
+
         note = Note.objects.get()
         expected_slug = slugify(self.NOTE_TITLE)[:100]
         self.assertEqual(note.slug, expected_slug)

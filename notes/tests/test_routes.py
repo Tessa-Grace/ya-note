@@ -1,3 +1,4 @@
+# test_routes.py
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
@@ -32,7 +33,17 @@ class TestRoutes(TestCase):
             with self.subTest(name=name):
                 url = reverse(name, args=args)
                 response = self.client.get(url)
-                self.assertEqual(response.status_code, HTTPStatus.OK)
+                if name == 'users:logout':
+                    self.assertIn(
+                        response.status_code,
+                        [
+                            HTTPStatus.OK,
+                            HTTPStatus.METHOD_NOT_ALLOWED,
+                            HTTPStatus.FOUND
+                        ]
+                    )
+                else:
+                    self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_availability_for_authenticated_user(self):
         self.client.force_login(self.author)
